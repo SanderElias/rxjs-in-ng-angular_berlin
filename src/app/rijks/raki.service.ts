@@ -22,7 +22,10 @@ const collection = searchObj =>
 const detail = detailNumber =>
   `https://www.rijksmuseum.nl/api/en/collection/${detailNumber}?key=${key}&format=json`;
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+  deps: [HttpClient]
+})
 export class RakiService {
   private artCount = 4000;
   private detailNumber = new Subject<string | undefined>();
@@ -62,12 +65,10 @@ export class RakiService {
     obs.complete();
   }).pipe(
     switchMap(selection =>
-      this.http
-        .get<CollectionObject>(collection(selection))
-        .pipe(
-          map(r => r.artObjects[0]),
-          catchError(() => timer(500).pipe(switchMap(() => this.getArtObject$)))
-        )
+      this.http.get<CollectionObject>(collection(selection)).pipe(
+        map(r => r.artObjects[0]),
+        catchError(() => timer(500).pipe(switchMap(() => this.getArtObject$)))
+      )
     ),
     switchMap(
       (artObject: ArtObject) =>
@@ -85,18 +86,16 @@ export class RakiService {
 
   artist(q) {
     console.log(q, serialize({ q }));
-    return this.http
-      .get<CollectionObject>(collection({ q }))
-      .pipe(
-        map(r => r.artObjects),
-        map((artObjects: ArtObject[]) =>
-          artObjects.reduce((acc, e) => (e.hasImage ? acc.concat(e) : acc), [])
-        ),
-        tap(r => console.log(r))
-      );
+    return this.http.get<CollectionObject>(collection({ q })).pipe(
+      map(r => r.artObjects),
+      map((artObjects: ArtObject[]) =>
+        artObjects.reduce((acc, e) => (e.hasImage ? acc.concat(e) : acc), [])
+      ),
+      tap(r => console.log(r))
+    );
   }
 
-  private preload(url) {
+  private preload(url): Promise<string> {
     return new Promise((resolve, reject) => {
       const resolveWithUrl = () => resolve(`url(${url})`);
       const img = document.createElement('img');

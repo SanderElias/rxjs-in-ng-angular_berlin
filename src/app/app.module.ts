@@ -43,14 +43,21 @@ import { WikipediaService } from './samples/wikipedia.service';
 import { WikipediaComponent } from './samples/wikipedia/wikipedia.component';
 
 import { TimeService } from './time.service';
-import { ButtonBarItemComponent, ButtonBarItemDirective } from './ui/button-bar-item/button-bar-item.component';
+import {
+  ButtonBarItemComponent,
+  ButtonBarItemDirective
+} from './ui/button-bar-item/button-bar-item.component';
 import { ButtonBar } from './ui/button-bar/button-bar.component';
 import { ButtonbarService } from './ui/button-bar/buttonbar.service';
 
 const routes: Routes = [
   { path: '', component: SamplesComponent },
   { path: 'movie', component: MovieComponent },
-  { path: 'movie/:id', component: MovieComponent }
+  { path: 'movie/:id', component: MovieComponent },
+  {
+    path: 'vm',
+    loadChildren: 'src/app/view-model/view-model.module#ViewModelModule'
+  }
 ];
 
 @NgModule({
@@ -83,7 +90,7 @@ const routes: Routes = [
     TakeUntilComponent,
     TakeWhileComponent,
     WhipwheehwComponent,
-    WikipediaComponent,
+    WikipediaComponent
   ],
   imports: [
     BrowserModule,
@@ -103,7 +110,7 @@ const routes: Routes = [
     RakiService,
     SwPeopleService,
     SwUrlService,
-    TimeService,
+
     WikipediaService
   ],
   bootstrap: [AppComponent]

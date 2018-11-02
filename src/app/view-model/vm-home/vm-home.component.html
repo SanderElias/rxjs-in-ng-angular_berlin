@@ -1,0 +1,23 @@
+<style>
+  .hold {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:100vh;
+    width: 100vw;
+    background-color: aquamarine;
+    padding: 20px;
+    display: grid;
+    grid-template-rows: 40px 1fr;
+  }
+</style>
+
+<div class="hold">
+  <section>
+    <h1>View Model sample</h1>
+  </section>
+  <section>
+
+    <painting [art]='art$ | async'></painting>
+  </section>
+</div>
