@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   numberOfBackgrounds = 16;
   movingBg$ = new Subject().pipe(startWith(true));
 
-  backgroundArr = randommizeArrayOrder(
+  backgroundArr = randomizeArrayOrder(
     Array.from(
       { length: this.numberOfBackgrounds },
       (e, i) => `Url(/assets/mainbg${i + 1}.jpg`
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
 }
 //
 
-function randommizeArrayOrder(seed: any[]) {
+function randomizeArrayOrder(seed: any[]) {
   const org = [...seed];
   const retour = [];
   while (org.length) {

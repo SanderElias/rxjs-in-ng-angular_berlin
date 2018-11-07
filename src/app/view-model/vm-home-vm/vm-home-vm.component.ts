@@ -1,20 +1,38 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { fromEvent, NEVER, Subject, timer } from 'rxjs';
-import { filter, map, pluck, scan, startWith, switchMap, tap } from 'rxjs/operators';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild
+} from '@angular/core';
+import { fromEvent, NEVER, Subject, timer, combineLatest, of } from 'rxjs';
+import {
+  filter,
+  map,
+  pluck,
+  scan,
+  startWith,
+  switchMap,
+  tap,
+  take
+} from 'rxjs/operators';
 import { RakiService } from 'src/app/rijks/raki.service';
 import { QuoteService } from '../quote/quote.service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
-  selector: 'vm-home',
-  templateUrl: './vm-home.component.html',
+  selector: 'vm-home-vm',
+  templateUrl: './vm-home-vm.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class VmHomeComponent implements OnInit {
+export class VmHomeVmComponent implements OnInit {
   init$ = new Subject<void>();
-  @ViewChild('ba', { read: ElementRef }) ba;
-  @ViewChild('bq', { read: ElementRef }) bq;
-  @ViewChild('speed', { read: ElementRef }) speedRef;
+  @ViewChild('ba', { read: ElementRef }) set _ba(elm) {this.ba = elm}
+  ba;
+  @ViewChild('bq', { read: ElementRef }) set _bq(elm) {this.bq = elm}
+  bq;
+  @ViewChild('speed', { read: ElementRef }) set _speed(elm) {this.speedRef = elm}
+  speedRef;
+  data: any;
 
   art$ = this.raki.randomImage$.pipe(filter(Boolean));
 
@@ -24,7 +42,7 @@ export class VmHomeComponent implements OnInit {
     pluck('target', 'value'),
     map(x => +x),
     startWith(3.5),
-    tap(r => console.log('speed', r)),
+    tap(r => console.log('speed', r))
     // shareReplay(1),  // Solution?
   );
 
@@ -43,6 +61,34 @@ export class VmHomeComponent implements OnInit {
     scan((duration, t) => 20 - t)
   );
 
+  vm$ = combineLatest(
+    this.pausedArt$,
+    this.pauseQuote$,
+    this.countDown$,
+    this.baClicks$,
+    this.bqClicks$,
+    this.speed$
+  ).pipe(
+    map(
+      ([art, quote, countDown, baToggle, bqToggle, speed]: [
+        string,
+        string,
+        number,
+        boolean,
+        boolean,
+        number
+      ]) => ({
+        art,
+        quote,
+        countDown,
+        baToggle,
+        bqToggle,
+        speed
+      })
+    ),
+    tap(data => (this.data = data))
+  );
+
   constructor(private raki: RakiService, private q: QuoteService) {}
 
   refClickToggle(name: string) {
@@ -55,6 +101,9 @@ export class VmHomeComponent implements OnInit {
 
   refEvent(name: string, eventName: string) {
     return this.init$.pipe(
+      switchMap(() => timer(10, 100)),
+      switchMap(() => this[name] ? of(this[name]) : NEVER),
+      take(1),
       switchMap(() => fromEvent(this[name].nativeElement, eventName)),
       tap(() => console.log(name, eventName))
     );
@@ -65,3 +114,4 @@ export class VmHomeComponent implements OnInit {
     setTimeout(() => this.init$.next(), 10);
   }
 }
+
