@@ -1,3 +1,4 @@
+<!-- main part -->
 <div class="hold" *ngIf="vm$ | async as vm else loading">
   <section>
     <h1>Need better inspiration?</h1>
@@ -5,10 +6,10 @@
   </section>
   <section>
     <div class="row">
-      <small *ngIf="!vm.baToggle">Art is updated in {{vm.countDown}} seconds.</small>
-      <small *ngIf="vm.baToggle">Art updates are paused.</small>
-      <small *ngIf="!vm.bqToggle">Quotes updates every {{vm.speed}} seconds</small>
-      <small *ngIf="vm.bqToggle">Quotes are paused</small>
+      <small *ngIf="!vm.baToggle"> Art is updated in {{vm.countDown}} seconds.</small>
+      <small *ngIf="vm.baToggle">  Art updates are paused.</small>
+      <small *ngIf="!vm.bqToggle"> Quotes updates every {{vm.speed}} seconds</small>
+      <small *ngIf="vm.bqToggle">  Quotes are paused</small>
     </div>
 
     <div class="row">
@@ -28,6 +29,17 @@
   </section>
 </div>
 
+<!-- loading modal -->
+<ng-template #loading>
+    <div class="hold">
+      <div class="dummy"></div>
+      <div class="wait">
+        <h1 [style.color]="'white'">waiting for the first quote</h1>
+      </div>
+    </div>
+  </ng-template>
+
+<!-- I prefer inline styling of yet another file -->
 <style>
   .hold {
     position: absolute;
@@ -65,11 +77,4 @@
   }
 </style>
 
-<ng-template #loading>
-  <div class="hold">
-    <div class="dummy"></div>
-    <div class="wait">
-      <h1 [style.color]="'white'">waiting for the first quote</h1>
-    </div>
-  </div>
-</ng-template>
+
