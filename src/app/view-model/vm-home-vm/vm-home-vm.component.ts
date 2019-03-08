@@ -1,21 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import { fromEvent, NEVER, Subject, timer, combineLatest, of } from 'rxjs';
-import {
-  filter,
-  map,
-  pluck,
-  scan,
-  startWith,
-  switchMap,
-  tap,
-  take
-} from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { combineLatest, fromEvent, NEVER, of, Subject, timer } from 'rxjs';
+import { filter, map, pluck, scan, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { RakiService } from 'src/app/rijks/raki.service';
 import { QuoteService } from '../quote/quote.service';
 
@@ -26,11 +11,20 @@ import { QuoteService } from '../quote/quote.service';
 })
 export class VmHomeVmComponent implements OnInit {
   init$ = new Subject<void>();
-  @ViewChild('ba', { read: ElementRef }) set _ba(elm) {this.ba = elm}
+  @ViewChild('ba', { read: ElementRef })
+  set _ba(elm) {
+    this.ba = elm;
+  }
   ba;
-  @ViewChild('bq', { read: ElementRef }) set _bq(elm) {this.bq = elm}
+  @ViewChild('bq', { read: ElementRef })
+  set _bq(elm) {
+    this.bq = elm;
+  }
   bq;
-  @ViewChild('speed', { read: ElementRef }) set _speed(elm) {this.speedRef = elm}
+  @ViewChild('speed', { read: ElementRef })
+  set _speed(elm) {
+    this.speedRef = elm;
+  }
   speedRef;
   data: any;
 
@@ -102,7 +96,8 @@ export class VmHomeVmComponent implements OnInit {
   refEvent(name: string, eventName: string) {
     return this.init$.pipe(
       switchMap(() => timer(10, 100)),
-      switchMap(() => this[name] ? of(this[name]) : NEVER),
+      switchMap(() => (this[name] ? of(this[name]) : NEVER)),
+      tap(e => console.log('init done, ref:', e)),
       take(1),
       switchMap(() => fromEvent(this[name].nativeElement, eventName)),
       tap(() => console.log(name, eventName))
@@ -114,4 +109,3 @@ export class VmHomeVmComponent implements OnInit {
     setTimeout(() => this.init$.next(), 10);
   }
 }
-
