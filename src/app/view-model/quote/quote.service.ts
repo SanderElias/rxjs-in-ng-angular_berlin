@@ -1,16 +1,31 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { shareReplay, map, mergeMap, switchMap } from 'rxjs/operators';
-import { interval, timer } from 'rxjs';
+import {
+  shareReplay,
+  map,
+  mergeMap,
+  switchMap,
+  catchError
+} from 'rxjs/operators';
+import { interval, timer, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
   deps: [HttpClient]
 })
 export class QuoteService {
-  quotes$ = this.http
-    .get<Quote[]>('https://talaikis.com/api/quotes/')
-    .pipe(shareReplay(1));
+  quotes$ = this.http.get<Quote[]>('https://talaikis.com/api/quotes/').pipe(
+    catchError(e =>
+      of<Quote[]>([
+        {
+          quote: 'Sorry, quote service unavailable',
+          author: 'me',
+          cat: 'none'
+        }
+      ])
+    ),
+    shareReplay(1)
+  );
 
   quoteLength$ = this.quotes$.pipe(
     map(list => list.length),

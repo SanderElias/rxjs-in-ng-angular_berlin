@@ -11,18 +11,17 @@ import { QuoteService } from '../quote/quote.service';
 })
 export class VmHomeVmComponent implements OnInit {
   init$ = new Subject<void>();
-  @ViewChild('ba', { read: ElementRef })
-  set _ba(elm) {
+  @ViewChild('ba', { read: ElementRef }) set _ba(elm) {
     this.ba = elm;
   }
   ba;
-  @ViewChild('bq', { read: ElementRef })
-  set _bq(elm) {
+
+  @ViewChild('bq', { read: ElementRef }) set _bq(elm) {
     this.bq = elm;
   }
   bq;
-  @ViewChild('speed', { read: ElementRef })
-  set _speed(elm) {
+
+  @ViewChild('speed', { read: ElementRef }) set _speed(elm) {
     this.speedRef = elm;
   }
   speedRef;
