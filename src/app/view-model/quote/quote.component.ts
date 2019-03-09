@@ -8,7 +8,9 @@ import { Quote } from './quote.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuoteComponent {
+  /** use a hostbinding to add a class tot he host element */
   @HostBinding('class.z2') shadow = true;
 
+  /** simple element, only respons to on incoming quote */
   @Input() quote: Quote;
 }

@@ -1,9 +1,33 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  AfterContentInit
+} from '@angular/core';
 import { combineLatest, fromEvent, NEVER, of, Subject, timer } from 'rxjs';
-import { filter, map, pluck, scan, startWith, switchMap, take, tap } from 'rxjs/operators';
+import {
+  filter,
+  map,
+  pluck,
+  scan,
+  startWith,
+  switchMap,
+  take,
+  tap
+} from 'rxjs/operators';
 import { RakiService } from 'src/app/rijks/raki.service';
-import { QuoteService } from '../quote/quote.service';
+import { QuoteService, Quote } from '../quote/quote.service';
 
+interface Vm {
+  art: string;
+  quote: Quote;
+  countDown: number;
+  baToggle: boolean;
+  bqToggle: boolean;
+  speed: number;
+}
 @Component({
   selector: 'vm-home-vm',
   templateUrl: './vm-home-vm.component.html',
@@ -62,23 +86,14 @@ export class VmHomeVmComponent implements OnInit {
     this.bqClicks$,
     this.speed$
   ).pipe(
-    map(
-      ([art, quote, countDown, baToggle, bqToggle, speed]: [
-        string,
-        string,
-        number,
-        boolean,
-        boolean,
-        number
-      ]) => ({
-        art,
-        quote,
-        countDown,
-        baToggle,
-        bqToggle,
-        speed
-      })
-    ),
+    map<any[], Vm>(([art, quote, countDown, baToggle, bqToggle, speed]) => ({
+      art,
+      quote,
+      countDown,
+      baToggle,
+      bqToggle,
+      speed
+    })),
     tap(data => (this.data = data))
   );
 
@@ -104,7 +119,10 @@ export class VmHomeVmComponent implements OnInit {
   }
 
   ngOnInit() {
-    // also, it gives the ui some time to settle
+    /**
+     * Lift the init to the next cycle. That way all the UI elements are in place
+     * and available to the refEvent helper
+     */
     setTimeout(() => this.init$.next(), 10);
   }
 }
